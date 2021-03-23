@@ -1,7 +1,9 @@
 '''
+Practice example of hash table using open addressing
 Created on Mar 22, 2021
+
 @author: Nankey
-Practice example of hash table using separate chaining
+Based on example code written by Davide Mastromatteo, github = mastro35
 Reference: http://thepythoncorner.com/dev/hash-tables-understanding-dictionaries/
 
 '''
@@ -16,23 +18,31 @@ class hashTable:
         self.buckets = [[] for i in range(self.bucketSize)]
         self.hashInsert(element)
         
-        
     def hashInsert(self, element):
         print('Insert: ', element)
+        self.buckets = [None] * self.bucketSize
+        
         for key, value in element:
             hashedValue = hash(key)
             index = hashedValue % self.bucketSize
-            self.buckets[index].append((key,value))
+            
+            while self.buckets[index] is not None:
+                print(f'The key {key} collided with {self.buckets[index]}')
+                index = (index + 1) % self.bucketSize
+
+            self.buckets[index] = (key,value)
         
     def hashSearch(self, inputKey):
         print('Search: ', inputKey)
         hashedValue = hash(inputKey)
         index = hashedValue % self.bucketSize
-        bucket = self.buckets[index]
-        for key, value in bucket:
+        
+        while self.buckets[index] is not None:
+            key, value = self.buckets[index]
             if key == inputKey:
-                return(value)
-        return None
+                return value
+            index = (index + 1) % self.bucketSize
+        #return None
         
     def __str__(self):
         return pprint.pformat(self.buckets)
@@ -53,6 +63,7 @@ print('            ')
 
 print(hashTable)
 print('            ')
+
 x = 'Misa'
 print(x, 'is', hashTable.hashSearch(x), 'years old')
 
